@@ -51,7 +51,8 @@ class Evaluator_PartI:
             datasetname=f'3d{dataset.name[4:]}'
         else:
             datasetname=dataset.name
-        Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC'
+        # Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC'
+        Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC_rot'
         pair_fmrs=[]
         for pair in tqdm(dataset.pair_ids):
             id0,id1=pair
@@ -122,7 +123,8 @@ class Evaluator_PartII:
             datasetname=f'3d{dataset.name[4:]}'
         else:
             datasetname=dataset.name
-        Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC'
+        # Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC'
+        Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC_rot'
         pair_fmrs=[]
         for pair in tqdm(dataset.pair_ids):
             id0,id1=pair

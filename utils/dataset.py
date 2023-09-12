@@ -53,40 +53,113 @@ class EvalDataset(abc.ABC):
 
 #The dataset class for original/ground truth datas
 class ThrDMatchPartDataset(EvalDataset):
-    def __init__(self,root_dir,stationnum,gt_dir=None):
+    def __init__(self,root_dir,stationnum,gt_dir=None, gt2_dir=None):
         self.root=root_dir
         if gt_dir==None:
             self.gt_dir=f'{self.root}/PointCloud/gt.log'
         else:
             self.gt_dir=gt_dir
+        # add additional attribute to load rotated gt2
+        if gt2_dir==None:
+             # make gt2.log in PointClouds_rot dir
+                make_non_exists_dir(f'{self.root}/PointCloud_rot')
+                open(f'{self.root}/PointCloud_rot/gt2.log', 'a').close()
+                self.gt2_dir = f'{self.root}/PointCloud_rot/gt2.log'
+        else:
+            self.gt2_dir = gt2_dir
+        
+        # ## Rotated
+        # self.root=root_dir
+        # if gt_dir==None:
+        #     self.gt_dir=f'{self.root}/PointCloud/gt2.log'
+        # else:
+        #     self.gt_dir=gt_dir
         self.kps_pc_fn=[f'{self.root}/Keypoints_PC/cloud_bin_{k}Keypoints.npy' for k in range(stationnum)]
         self.kps_fn=[f'{self.root}/Keypoints/cloud_bin_{k}Keypoints.txt' for k in range(stationnum)]
+        #y
         self.pc_ply_paths=[f'{self.root}/PointCloud/cloud_bin_{k}.ply' for k in range(stationnum)]
         self.pc_txt_paths=[f'{self.root}/PointCloud/cloud_bin_{k}.txt' for k in range(stationnum)]
-        self.pair_id2transform=self.parse_gt_fn(self.gt_dir)
-        self.pair_ids=[tuple(v.split('-')) for v in self.pair_id2transform.keys()]
+        
+        #y get_key_points_feature extracting
+        self.rot_pc_ply_paths=[f'{self.root}/PointCloud_rot/cloud_bin_{k}.ply' for k in range(stationnum)]
+        self.rot_pc_txt_paths=[f'{self.root}/PointCloud_rot/cloud_bin_{k}.txt' for k in range(stationnum)]
+        
+        # self.pair_id2transform=self.parse_gt_fn(self.gt_dir)
+        # self.rot_pair_id2transform=self.parse_gt_fn(self.gt2_dir)
+        # 1.
+        self.pair_id2transform_gt = self.parse_gt_fn(self.gt_dir)
+        
+        # 1.
+        self.pair_ids=[tuple(v.split('-')) for v in self.pair_id2transform_gt.keys()]
+        # self.pair_ids=[tuple(v.split('-')) for v in self.pair_id2transform.keys()]
+        # 1.
+        # stationnums=[60,60,60,55,57,37,66,38]
         self.pc_ids=[str(k) for k in range(stationnum)]
         self.pair_num=self.get_pair_nums()
         self.name='3dmatch/kitchen'
-
+        
+        self.rot_kps_pc_fn=[f'{self.root}/Keypoints_PC_rot/cloud_bin_{k}Keypoints.npy' for k in range(stationnum)]
+        self.rot_kps_fn=[f'{self.root}/Keypoints_rot/cloud_bin_{k}Keypoints.txt' for k in range(stationnum)]
+        self.pair_id2transform = self.parse_gt_fn(self.gt2_dir)
+        # self.rot_pc_ply_paths=[f'{self.root}/PointCloud/cloud_bin_{k}.ply' for k in range(stationnum)]
     #function for gt(input: gt.log)
     @staticmethod
     def parse_gt_fn(fn):
-        with open(fn,'r') as f:
-            lines=f.readlines()
-            pair_num=len(lines)//5
-            pair_id2transform={}
-            for k in range(pair_num):
-                id0,id1=np.fromstring(lines[k*5],dtype=np.float32,sep='\t')[0:2]
-                id0=int(id0)
-                id1=int(id1)
-                row0=np.fromstring(lines[k*5+1],dtype=np.float32,sep=' ')
-                row1=np.fromstring(lines[k*5+2],dtype=np.float32,sep=' ')
-                row2=np.fromstring(lines[k*5+3],dtype=np.float32,sep=' ')
-                transform=np.stack([row0,row1,row2],0)
-                pair_id2transform['-'.join((str(id0),str(id1)))]=transform
+        if fn is None:
+            pass
+        else:     
+            with open(fn,'r') as f:
+                lines=f.readlines()
+                pair_num=len(lines)//5
+                pair_id2transform_gt={}
+                for k in range(pair_num):
+                    id0,id1=np.fromstring(lines[k*5],dtype=np.float32,sep='\t')[0:2]
+                    id0=int(id0)
+                    id1=int(id1)
+                    row0=np.fromstring(lines[k*5+1],dtype=np.float32,sep=' ') # 1 * 3
+                    row1=np.fromstring(lines[k*5+2],dtype=np.float32,sep=' ')
+                    row2=np.fromstring(lines[k*5+3],dtype=np.float32,sep=' ')
+                    transform=np.stack([row0,row1,row2],0) # 3 * 3
+                    pair_id2transform_gt['-'.join((str(id0),str(id1)))]=transform
 
-            return pair_id2transform
+                return pair_id2transform_gt
+    # ## Rotated
+    # @staticmethod
+    # def parse_gt_fn(fn):
+    #     with open(fn,'r') as f:
+    #         lines=f.readlines()
+    #         pair_num=len(lines)//5
+    #         pair_id2transform={}
+    #         for k in range(pair_num):
+    #             id0,id1=np.fromstring(lines[k*5],dtype=np.float32,sep='\t')[0:2]
+    #             id0=int(id0)
+    #             id1=int(id1)
+    #             row0=np.fromstring(lines[k*5+1],dtype=np.float32,sep=' ') # 1 * 3
+    #             row1=np.fromstring(lines[k*5+2],dtype=np.float32,sep=' ')
+    #             row2=np.fromstring(lines[k*5+3],dtype=np.float32,sep=' ')
+    #             transform=np.stack([row0,row1,row2],0) # 3 * 3
+    #             pair_id2transform['-'.join((str(id0),str(id1)))]=transform
+
+    #         return pair_id2transform
+    # def parse_gt_fn(self, fn):
+    #     Save_list_dir=f'{self.root}/PointCloud_rot/gt2.log'
+    #     make_non_exists_dir(Save_list_dir)
+    #     batch_i=-1
+    #     testlist_pair=[]
+    #     with open(fn,'r') as f:
+    #         lines=f.readlines()
+    #         pair_num=len(lines)//5
+    #         pair_id2transform={}
+    #         for k in range(pair_num):
+    #             id0,id1=np.fromstring(lines[k*5],dtype=np.float32,sep='\t')[0:2]
+    #             id0=int(id0)
+    #             id1=int(id1)
+    #             row0=np.fromstring(lines[k*5+1],dtype=np.float32,sep=' ')
+    #             row1=np.fromstring(lines[k*5+2],dtype=np.float32,sep=' ')
+    #             row2=np.fromstring(lines[k*5+3],dtype=np.float32,sep=' ')
+    #             transform=np.stack([row0,row1,row2],0)
+    #             pair_id2transform['-'.join((str(id0),str(id1)))]=transform
+    #         return pair_id2transform
 
     def get_pair_ids(self):
         return self.pair_ids
@@ -99,10 +172,18 @@ class ThrDMatchPartDataset(EvalDataset):
 
     def get_pc_dir(self,cloud_id):
         return self.pc_ply_paths[int(cloud_id)]
-
+    # y
     def get_pc(self,pc_id):
         if os.path.exists(self.pc_ply_paths[int(pc_id)]):
             pc=o3d.io.read_point_cloud(self.pc_ply_paths[int(pc_id)])
+            return np.array(pc.points)
+        else:
+            pc=np.loadtxt(self.pc_paths[int(pc_id)],delimiter=',')
+            return pc
+    
+    def rot_get_pc(self,pc_id):
+        if os.path.exists(self.rot_pc_ply_paths[int(pc_id)]):
+            pc=o3d.io.read_point_cloud(self.rot_pc_ply_paths[int(pc_id)])
             return np.array(pc.points)
         else:
             pc=np.loadtxt(self.pc_paths[int(pc_id)],delimiter=',')
@@ -117,18 +198,37 @@ class ThrDMatchPartDataset(EvalDataset):
     def get_transform(self, id0, id1):
         return self.pair_id2transform['-'.join((id0,id1))]
 
+    def get_gt_transform(self, id0, id1):
+        return self.pair_id2transform_gt['-'.join((id0,id1))]
+
     def get_name(self):
         return self.name
 
     def get_kps(self, cloud_id):
-        if not os.path.exists(self.kps_pc_fn[int(cloud_id)]):
-            pc=self.get_pc(cloud_id)
+        ## load non-rotate
+        # if not os.path.exists(self.kps_pc_fn[int(cloud_id)]):
+        #     pc=self.get_pc(cloud_id)
+        #     key_idxs=np.loadtxt(self.kps_fn[int(cloud_id)]).astype(np.int)
+        #     keys=pc[key_idxs]
+        #     make_non_exists_dir(f'{self.root}/Keypoints_PC')
+        #     np.save(self.kps_pc_fn[int(cloud_id)],keys)
+        #     return keys
+        # return np.load(self.kps_pc_fn[int(cloud_id)])
+        ## load rotated
+        # self.kps_pc_fn=[f'{self.root}/Keypoints_PC/cloud_bin_{k}Keypoints.npy' for k in range(stationnum)]
+        # self.kps_fn=[f'{self.root}/Keypoints/cloud_bin_{k}Keypoints.txt' for k in range(stationnum)]
+        # self.rot_kps_pc_fn=[f'{self.root}/Keypoints_PC_rot/cloud_bin_{k}Keypoints.npy' for k in range(stationnum)]
+        # self.rot_kps_fn=[f'{self.root}/Keypoints_rot/cloud_bin_{k}Keypoints.txt' for k in range(stationnum)]
+        if not os.path.exists(self.rot_kps_pc_fn[int(cloud_id)]):
+            pc=self.rot_get_pc(cloud_id)
+            # pc=self.rot_get_pc(cloud_id)
             key_idxs=np.loadtxt(self.kps_fn[int(cloud_id)]).astype(np.int)
+            # are keep points fixed? or we also need to build a new keypoints_pc.txt file
             keys=pc[key_idxs]
-            make_non_exists_dir(f'{self.root}/Keypoints_PC')
-            np.save(self.kps_pc_fn[int(cloud_id)],keys)
+            make_non_exists_dir(f'{self.root}/Keypoints_PC_rot')
+            np.save(self.rot_kps_pc_fn[int(cloud_id)],keys)
             return keys
-        return np.load(self.kps_pc_fn[int(cloud_id)])
+        return np.load(self.rot_kps_pc_fn[int(cloud_id)])
 
 #Get dataset items with the dataset name(output: dict)
 def get_dataset_name(dataset_name,origin_data_dir):

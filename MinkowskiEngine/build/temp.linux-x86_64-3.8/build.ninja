@@ -1,0 +1,46 @@
+ninja_required_version = 1.3
+cxx = c++
+nvcc = /usr/local/cuda/bin/nvcc
+
+cflags = -pthread -B /opt/conda/compiler_compat -Wl,--sysroot=/ -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes -fPIC -I/opt/conda/lib/python3.8/site-packages/torch/include -I/opt/conda/lib/python3.8/site-packages/torch/include/torch/csrc/api/include -I/opt/conda/lib/python3.8/site-packages/torch/include/TH -I/opt/conda/lib/python3.8/site-packages/torch/include/THC -I/usr/local/cuda/include -I/home/wendyu/baseline/YOHO/MinkowskiEngine/src -I/home/wendyu/baseline/YOHO/MinkowskiEngine/src/3rdparty -I/include -I/opt/conda/include/python3.8 -c
+post_cflags = -fopenmp -O3 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_C -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++14
+cuda_cflags = -I/opt/conda/lib/python3.8/site-packages/torch/include -I/opt/conda/lib/python3.8/site-packages/torch/include/torch/csrc/api/include -I/opt/conda/lib/python3.8/site-packages/torch/include/TH -I/opt/conda/lib/python3.8/site-packages/torch/include/THC -I/usr/local/cuda/include -I/home/wendyu/baseline/YOHO/MinkowskiEngine/src -I/home/wendyu/baseline/YOHO/MinkowskiEngine/src/3rdparty -I/include -I/opt/conda/include/python3.8 -c
+cuda_post_cflags = -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' --expt-relaxed-constexpr --expt-extended-lambda -O3 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_C -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_61,code=sm_61 -gencode=arch=compute_86,code=compute_86 -gencode=arch=compute_86,code=sm_86 -gencode=arch=compute_52,code=sm_52 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_60,code=sm_60 -std=c++14
+ldflags = 
+
+rule compile
+  command = $cxx -MMD -MF $out.d $cflags -c $in -o $out $post_cflags
+  depfile = $out.d
+  deps = gcc
+
+rule cuda_compile
+  command = $nvcc $cuda_cflags -c $in -o $out $cuda_post_cflags
+
+
+
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/math_functions_cpu.o: compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/math_functions_cpu.cpp
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/math_functions_gpu.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/math_functions_gpu.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/coordinate_map_manager.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/coordinate_map_manager.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/coordinate_map_gpu.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/coordinate_map_gpu.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/convolution_kernel.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/convolution_kernel.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/convolution_gpu.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/convolution_gpu.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/convolution_transpose_gpu.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/convolution_transpose_gpu.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/pooling_avg_kernel.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/pooling_avg_kernel.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/pooling_max_kernel.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/pooling_max_kernel.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/local_pooling_gpu.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/local_pooling_gpu.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/local_pooling_transpose_gpu.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/local_pooling_transpose_gpu.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/global_pooling_gpu.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/global_pooling_gpu.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/broadcast_kernel.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/broadcast_kernel.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/broadcast_gpu.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/broadcast_gpu.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/pruning_gpu.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/pruning_gpu.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/interpolation_gpu.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/interpolation_gpu.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/spmm.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/spmm.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/gpu.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/gpu.cu
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/quantization.o: compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/quantization.cpp
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/direct_max_pool.o: compile /home/wendyu/baseline/YOHO/MinkowskiEngine/src/direct_max_pool.cpp
+build /home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/pybind/minkowski.o: cuda_compile /home/wendyu/baseline/YOHO/MinkowskiEngine/pybind/minkowski.cu
+
+
+
+
+

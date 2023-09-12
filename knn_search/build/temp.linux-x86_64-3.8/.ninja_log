@@ -1,0 +1,3 @@
+# ninja log v5
+1	867	1689067429179161939	/home/wendyu/baseline/YOHO/knn_search/build/temp.linux-x86_64-3.8/src/knn_cuda.o	42b28bf9968ac7e
+0	17602	1689067445895699860	/home/wendyu/baseline/YOHO/knn_search/build/temp.linux-x86_64-3.8/src/knn.o	bb132eed6ef44e46

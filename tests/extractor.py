@@ -155,6 +155,7 @@ class extractor_PartII():
         else:
             datasetname=dataset.name
         Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC'
+        # Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC_rot'
         FCGF_dir=f'{self.cfg.output_cache_fn}/Testset/{datasetname}/FCGF_Input_Group_feature'
         YOHO_dir=f'{self.cfg.output_cache_fn}/Testset/{datasetname}/YOHO_Output_Group_feature'
 

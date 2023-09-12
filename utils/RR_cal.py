@@ -79,23 +79,27 @@ def read_trajectory(filename, dim=4):
 
     with open(filename) as f:
         lines = f.readlines()
-
+        # print("lines.size: ",len(lines)) # 2530
         # Extract the point cloud pairs
         keys = lines[0::(dim+1)]
+        # print("keys: ",keys)
+        # print("keys.size: ",len(keys)) # 506
         temp_keys = []
         for i in range(len(keys)):
-            temp_keys.append(keys[i].split('\t')[0:3])
-
+            # temp_keys.append(keys[i].split('\t')[0:3]) # gt.log
+            temp_keys.append(keys[i].split()[0:3]) # gt2.log
+        # print("temp_keys: ",temp_keys)
+        # print("temp_keys.size: ",len(temp_keys)) # 506
         final_keys = []
         for i in range(len(temp_keys)):
             final_keys.append([temp_keys[i][0].strip(), temp_keys[i][1].strip(), temp_keys[i][2].strip()])
 
-
+        
         traj = []
         for i in range(len(lines)):
             if i % 5 != 0:
-                traj.append(lines[i].split('\t')[0:dim])
-
+                # traj.append(lines[i].split('\t')[0:dim]) # gt.log
+                traj.append(lines[i].split()[0:dim]) # gt2.log
         traj = np.asarray(traj, dtype=np.float).reshape(-1,dim,dim)
         
         final_keys = np.asarray(final_keys)
@@ -292,6 +296,7 @@ def evaluate_registration(num_fragment, result, result_pairs, gt_pairs, gt, gt_i
     else:
         start_check=0
 
+    
     for idx in range(start_check,result_pairs.shape[0]):
         i = int(result_pairs[idx,0])
         j = int(result_pairs[idx,1])
@@ -300,7 +305,15 @@ def evaluate_registration(num_fragment, result, result_pairs, gt_pairs, gt, gt_i
         if gt_mask[i, j] > 0:
             n_res += 1
             gt_idx = gt_mask[i, j]
-            p = computeTransformationErr(np.linalg.inv(gt[gt_idx,:,:]) @ pose, gt_info[gt_idx,:,:])
+            # p = computeTransformationErr(np.linalg.inv(gt[gt_idx,:,:]) @ pose, gt_info[gt_idx,:,:])
+            # print("gt_size: ", gt.shape)
+            # print("gt_info_size: ", gt_info.shape)
+            # print("gt_mask: ", gt_mask)
+            # print("gt_mask:_size ", gt_mask.shape)
+            # # print("gt_mask:_size ", gt_mask.shape)
+            # print("gt_idx: ", gt_idx)
+            p = computeTransformationErr(np.linalg.pinv(gt[gt_idx,:,:]) @ pose, gt_info[gt_idx,:,:])
+            # p = computeTransformationErr(np.linalg.pinv(gt[gt_idx - 1,:,:]) @ pose, gt_info[gt_idx - 1,:,:])
             errors.append(np.sqrt(p)) #不包括flags==2的
             if p <= err2:
                 good += 1
@@ -339,7 +352,12 @@ def benchmark(cfg,datasets,max_iter,yoho_sign='YOHO_O'):
         pre_dir=f'{cfg.output_cache_fn}/Testset/{dataset.name}/Match/{yoho_sign}/{max_iter}iters'
         gt_dir_loc=str.rfind(dataset.gt_dir,'.')
         gt_dir=dataset.gt_dir[0:gt_dir_loc]
-        gt_pairs, gt_traj = read_trajectory(f'{gt_dir}.log')
+        gt_dir_temp = gt_dir[0:gt_dir_loc-3]
+        # load from gt2.log
+        new_gt_dir = f'{gt_dir_temp}_rot/gt'
+        print("new_gt_dir", new_gt_dir)
+        # gt_pairs, gt_traj = read_trajectory(f'{gt_dir}2.log')
+        gt_pairs, gt_traj = read_trajectory(f'{new_gt_dir}2.log')
         
         n_valid=0
         for ele in gt_pairs:
@@ -352,6 +370,7 @@ def benchmark(cfg,datasets,max_iter,yoho_sign='YOHO_O'):
         n_fragments, gt_traj_cov = read_trajectory_info(f'{gt_dir}.info')
         print(os.path.join(pre_dir,'pre.log'))
         est_pairs, est_traj = read_pre_trajectory(os.path.join(pre_dir,'pre.log'))
+        # print gt traj v.s. predict traj
         temp_precision, temp_recall,c_flag,c_error = evaluate_registration(n_fragments, est_traj, est_pairs, gt_pairs, gt_traj, gt_traj_cov,err2=cfg.RR_dist_threshold,nonconsecutive=nonconsecutive)
         c_flags[dataset.name]=c_flag
         c_errors[dataset.name]=c_error

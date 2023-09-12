@@ -1,0 +1,22 @@
+# ninja log v5
+0	208	1689062749975213117	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/math_functions_cpu.o	81ab2ce0ed602bab
+1	40573	1689062790312460179	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/math_functions_gpu.o	cfa6b03aaf84cc10
+208	73460	1689062823197527494	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/broadcast_kernel.o	d82ddd0c8247442f
+3	87464	1689062837194012042	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/pooling_avg_kernel.o	d8908c5c72ef68e3
+2	110634	1689062860366811828	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/convolution_kernel.o	bf32226f39e1fbf7
+4	122815	1689062872551231181	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/local_pooling_transpose_gpu.o	9873e3e6ba880585
+4	122961	1689062872695236132	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/local_pooling_gpu.o	fe33145b5130555
+4	123201	1689062872939244522	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/global_pooling_gpu.o	b42fa41b3f1ead6e
+2	123369	1689062873103250161	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/convolution_gpu.o	1372572f9212e164
+2	124496	1689062874231288941	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/convolution_transpose_gpu.o	7045ff7cd4bc990
+122816	135245	1689062884987658395	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/gpu.o	702970885be0ae7b
+123202	139089	1689062888843790695	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/direct_max_pool.o	9bf4b85b9c8e868
+122961	144166	1689062893915964602	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/quantization.o	fa5d615e5fded281
+3	149685	1689062899400152486	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/pooling_max_kernel.o	f5cfd6793eabc5e3
+1	151531	1689062901260216177	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/coordinate_map_manager.o	92ec007f0ae96b58
+40573	161980	1689062911716573891	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/broadcast_gpu.o	38791d17b1b7d730
+73461	192849	1689062942585626827	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/pruning_gpu.o	824572d630c8289e
+87465	203128	1689062952865976496	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/interpolation_gpu.o	f9e142f42d3bd493
+1	293043	1689063042729013608	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/coordinate_map_gpu.o	a4286c89dcc9a708
+123369	311921	1689063061637648559	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/pybind/minkowski.o	35029382e9a8fd0a
+110634	312251	1689063061961659429	/home/wendyu/baseline/YOHO/MinkowskiEngine/build/temp.linux-x86_64-3.8/home/wendyu/baseline/YOHO/MinkowskiEngine/src/spmm.o	86b6dad7b23c2af4

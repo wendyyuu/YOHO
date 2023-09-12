@@ -121,7 +121,7 @@ class trainset_create():
 
                 PC=dataset.get_pc(pc_id)
                 Key_idx=np.load(f'{self.output_dir}/Filtered_Keys/{dataset.name}/{pc_id}_index.npy')
-                
+                # generate 5 different rotation matrix and concatenate in to Random_Rs
                 for R_i in range(5):
                     R_one=random_rotation_matrix()
                     Random_Rs.append(R_one[None,:,:])
@@ -181,8 +181,8 @@ class trainset_create():
                 R_gt = dataset.get_transform(pc0,pc1)[0:3,0:3]
                 for Ri_id in range(Feats0_R.shape[0]):
                     for Rj_id in range(Feats1_R.shape[0]):
-                        R_i=Feats0_R[Ri_id]
-                        R_j=Feats1_R[Rj_id]
+                        R_i=Feats0_R[Ri_id] # pc0
+                        R_j=Feats1_R[Rj_id] # pc1
                         R=R_j@R_gt.T@R_i.T # from pc0 to pc1
                         true_idx=self.R2DR_id(R)
                         delR=self.DeltaR(R,true_idx)
@@ -322,3 +322,10 @@ if __name__=="__main__":
     trainset_creater.trainset()
     trainset_creater.valset()
     
+    """
+Generate Trainset using 3dmatch_train for PartI and PartII.
+PC*60 rotations->FCGF backbone-> FCGF Group feature for PC keypoints;
+PC + PCA filter -->new keys for less training noise;
+PC pair + gt --> gt pps;
+pps + FCGF Group feature --> batch.
+"""

@@ -85,7 +85,8 @@ class yohoc:
             datasetname=f'3d{dataset.name[4:]}'
         else:
             datasetname=dataset.name
-        Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC'
+        # Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC'
+        Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC_rot'
 
         print(f'Ransac with YOHO-C on {dataset.name}:')
         for pair in tqdm(dataset.pair_ids):
@@ -201,7 +202,8 @@ class yohoc_mul:
             datasetname=f'3d{dataset.name[4:]}'
         else:
             datasetname=dataset.name
-        Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC'
+        # Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC'
+        Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC_rot'
 
         id0,id1=pair
         #if os.path.exists(f'{Save_dir}/{id0}-{id1}.npz'):continue
@@ -262,7 +264,9 @@ class yohoc_mul:
             datasetname=f'3d{dataset.name[4:]}'
         else:
             datasetname=dataset.name
-        Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC'
+        # Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC'
+        # rotated features
+        Keys_dir=f'{self.cfg.origin_data_dir}/{datasetname}/Keypoints_PC_rot'
 
         print(f'Ransac with YOHO-C on {dataset.name}:')
         pair_ids=dataset.pair_ids
@@ -309,6 +313,7 @@ class yohoo:
             #Keypoints
             if dataset.name[0:4]=='3dLo':
                 datasetname=f'3d{dataset.name[4:]}'
+            # get kps from rotated pt
             Keys0=dataset.get_kps(id0)
             Keys1=dataset.get_kps(id1)
             #Key_pps
